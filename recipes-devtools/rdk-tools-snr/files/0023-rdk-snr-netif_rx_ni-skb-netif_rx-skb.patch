@@ -1,0 +1,31 @@
+From 93f7ef80c543605afbcd59bd1634952a324d7518 Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:27:17 +0000
+Subject: [PATCH 23/24] rdk/snr: netif_rx_ni(skb) --> netif_rx(skb)
+
+kernel commit 2655926aea9b (net: Remove netif_rx_any_context() and
+netif_rx_ni()).
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/netd/adk_netd_txrx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/klm/netd/adk_netd_txrx.c b/klm/netd/adk_netd_txrx.c
+index 2348e50..ca61b26 100644
+--- a/klm/netd/adk_netd_txrx.c
++++ b/klm/netd/adk_netd_txrx.c
+@@ -478,7 +478,7 @@ adk_netd_rx_handler(struct sk_buff *skb,
+ 			skb->protocol = eth_type_trans(skb, dev);
+ 		}
+ 		/* Call netif interface */
+-		netif_rx_ni(skb);
++		netif_rx(skb);
+ 		len = rx_params->fp_rx_md.pkt_len;
+ 		pk_trace(NETD_RX, "FP RX len %u if_id %u\n", len,
+ 			 linux_intf_id);
+-- 
+2.39.3
+

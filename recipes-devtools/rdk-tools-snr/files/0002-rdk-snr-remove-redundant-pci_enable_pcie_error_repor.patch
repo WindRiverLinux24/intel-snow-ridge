@@ -1,0 +1,125 @@
+From 25c4e073df8bfe9e36acf77e62f00c2fa4695a32 Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:26:18 +0000
+Subject: [PATCH 02/24] rdk/snr: remove redundant
+ pci_enable_pcie_error_reporting()
+
+pci_enable_pcie_error_reporting() enables the device to send ERR_*
+Messages.  Since f26e58bf6f54 ("PCI/AER: Enable error reporting when
+AER is native"), the PCI core does this for all devices during enumeration.
+
+Remove the redundant pci_enable_pcie_error_reporting() call from the
+driver. Also remove the corresponding pci_disable_pcie_error_reporting()
+from the driver .remove() path.
+
+Note that this doesn't control interrupt generation by the Root Port; that
+is controlled by the AER Root Error Command register, which is managed by
+the AER service driver.
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/cpk/ice_main.c                                  | 4 ----
+ klm/hqm/hqm/linux/dlb_main.c                        | 9 +--------
+ klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c | 3 ---
+ 3 files changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/klm/cpk/ice_main.c b/klm/cpk/ice_main.c
+index eb12b6f..d8963cb 100644
+--- a/klm/cpk/ice_main.c
++++ b/klm/cpk/ice_main.c
+@@ -545,7 +545,6 @@ static void ice_remove_recovery_mode(struct ice_pf *pf)
+ 	}
+ 
+ 	ice_reset(&pf->hw, ICE_RESET_CORER);
+-	pci_disable_pcie_error_reporting(pf->pdev);
+ 	ice_devlink_unregister(pf);
+ }
+ 
+@@ -3097,7 +3096,6 @@ ice_probe(struct pci_dev *pdev, const struct pci_device_id __always_unused *ent)
+ 		return err;
+ 	}
+ 
+-	pci_enable_pcie_error_reporting(pdev);
+ 	pci_set_master(pdev);
+ 
+ 	pf->pdev = pdev;
+@@ -3356,7 +3354,6 @@ err_exit_unroll:
+ 	ice_debugfs_pf_exit(pf);
+ err_rec_mode:
+ 	ice_devlink_unregister(pf);
+-	pci_disable_pcie_error_reporting(pdev);
+ 	pci_disable_device(pdev);
+ 	return err;
+ }
+@@ -3525,7 +3522,6 @@ static void ice_remove(struct pci_dev *pdev)
+ 	ice_devlink_unregister(pf);
+ 	ice_debugfs_pf_exit(pf);
+ 	ice_clear_interrupt_scheme(pf);
+-	pci_disable_pcie_error_reporting(pdev);
+ 	pci_disable_device(pdev);
+ }
+ 
+diff --git a/klm/hqm/hqm/linux/dlb_main.c b/klm/hqm/hqm/linux/dlb_main.c
+index a7862aa..6924780 100644
+--- a/klm/hqm/hqm/linux/dlb_main.c
++++ b/klm/hqm/hqm/linux/dlb_main.c
+@@ -884,14 +884,11 @@ static int dlb_probe(struct pci_dev *pdev,
+ 		goto mask_ur_err_fail;
+ 	}
+ 
+-	if (pci_enable_pcie_error_reporting(pdev))
+-		dev_info(&pdev->dev, "[%s()] Failed to enable AER\n", __func__);
+-
+ 	INIT_LIST_HEAD(&dlb_dev->vma_list);
+ 
+ 	ret = dlb_dev->ops->map_pci_bar_space(dlb_dev, pdev);
+ 	if (ret)
+-		goto map_pci_bar_fail;
++		goto mask_ur_err_fail;
+ 
+ 	ret = dlb_dev->ops->cdev_add(dlb_dev,
+ 				     dlb_dev_number_base,
+@@ -958,8 +955,6 @@ device_add_fail:
+ 	dlb_dev->ops->cdev_del(dlb_dev);
+ cdev_add_fail:
+ 	dlb_dev->ops->unmap_pci_bar_space(dlb_dev, pdev);
+-map_pci_bar_fail:
+-	pci_disable_pcie_error_reporting(pdev);
+ mask_ur_err_fail:
+ 	pci_release_regions(pdev);
+ pci_request_regions_fail:
+@@ -1020,8 +1015,6 @@ static void dlb_remove(struct pci_dev *pdev)
+ 
+ 	dlb_dev->ops->unmap_pci_bar_space(dlb_dev, pdev);
+ 
+-	pci_disable_pcie_error_reporting(pdev);
+-
+ 	pci_release_regions(pdev);
+ 
+ 	pci_disable_device(pdev);
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c b/klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c
+index fc4096c..ebca800 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c
+@@ -425,7 +425,6 @@ int adf_enable_aer(struct adf_accel_dev *accel_dev, struct pci_driver *adf)
+ 	struct pci_dev *pdev = accel_to_pci_dev(accel_dev);
+ 
+ 	adf->err_handler = (struct pci_error_handlers *)(&adf_err_handler);
+-	pci_enable_pcie_error_reporting(pdev);
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(adf_enable_aer);
+@@ -443,8 +442,6 @@ EXPORT_SYMBOL_GPL(adf_enable_aer);
+ void adf_disable_aer(struct adf_accel_dev *accel_dev)
+ {
+ 	struct pci_dev *pdev = accel_to_pci_dev(accel_dev);
+-
+-	pci_disable_pcie_error_reporting(pdev);
+ }
+ EXPORT_SYMBOL_GPL(adf_disable_aer);
+ 
+-- 
+2.39.3
+

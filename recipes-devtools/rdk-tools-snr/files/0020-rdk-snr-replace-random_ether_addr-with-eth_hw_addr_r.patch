@@ -1,0 +1,31 @@
+From 291d40929254a2623bd9a4ddbe8931aa2cec1c88 Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:27:07 +0000
+Subject: [PATCH 20/24] rdk/snr: replace random_ether_addr with
+ eth_hw_addr_random
+
+kernel commit ba530fea8ca1 ("ethernet: remove random_ether_addr()").
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/netd/adk_netd_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/klm/netd/adk_netd_main.c b/klm/netd/adk_netd_main.c
+index d5bb42e..108c069 100644
+--- a/klm/netd/adk_netd_main.c
++++ b/klm/netd/adk_netd_main.c
+@@ -333,7 +333,7 @@ adk_netd_if_create_common(struct adk_netd_dev_create_params
+ 		 * Generate random mac address. eth_random_addr() is the newer
+ 		 * version of generating mac address in linux kernel.
+ 		 */
+-		random_ether_addr(netdev->dev_addr);
++		eth_hw_addr_random(netdev);
+ 	} else {
+ 		memcpy(netdev->dev_addr, dev_params->mac_addr, ETH_ALEN);
+ 	}
+-- 
+2.39.3
+

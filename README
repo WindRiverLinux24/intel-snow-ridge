@@ -9,7 +9,9 @@ Table of Contents:
 ** 1.3 Building the intel-snow-ridge layer
 ** 1.4 License
 * 2. Hardware
-** 2.1 Validated Board Info
+** 2.1 Snow Ridge NS
+** 2.2 Snow Ridge BTS
+* 3. Runtime Development Kit (RDK)
 
 1. Overview
 ===========
@@ -100,3 +102,9 @@ in a different environment it may have some issues.
 
 [Board Info]
 	Jacobsville BTS Victoria Canyon Customer Reference Board (CRB)
+
+3. Runtime Development Kit (RDK)
+================================
+
+Intel Runtime Development Kit (RDK) is enabled through template feature/snowridge-rdk.
+Please read ${LAYERDIR}/templates/feature/snowridge-rdk/README first.

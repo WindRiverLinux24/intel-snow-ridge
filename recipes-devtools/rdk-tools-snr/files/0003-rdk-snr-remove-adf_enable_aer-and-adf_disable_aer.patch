@@ -1,0 +1,240 @@
+From acd9691f43d93a5a21e4620e2a710c7c6bb4d5fd Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:26:21 +0000
+Subject: [PATCH 03/24] rdk/snr: remove adf_enable_aer() and adf_disable_aer()
+
+pci_disable_pcie_error_reporting() was removed in kernel commit
+69b264df8a41 ("PCI/AER: Drop unused pci_disable_pcie_error_reporting()").
+
+pci_enable_pcie_error_reporting() was unexported in kernel commit
+7ec4b34be42345 (PCI/AER: Unexport pci_enable_pcie_error_reporting()).
+
+adf_enable_aer() and adf_disable_aer() become empty functions.
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ .../drivers/crypto/qat/qat_200xx/adf_drv.c    |  7 ----
+ .../drivers/crypto/qat/qat_c3xxx/adf_drv.c    |  7 ----
+ .../drivers/crypto/qat/qat_c4xxx/adf_drv.c    |  7 ----
+ .../qat/drivers/crypto/qat/qat_c62x/adf_drv.c |  7 ----
+ .../drivers/crypto/qat/qat_common/adf_aer.c   | 36 -------------------
+ .../crypto/qat/qat_common/adf_common_drv.h    |  2 --
+ .../drivers/crypto/qat/qat_d15xx/adf_drv.c    |  7 ----
+ .../drivers/crypto/qat/qat_dh895xcc/adf_drv.c |  7 ----
+ 8 files changed, 80 deletions(-)
+
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_200xx/adf_drv.c b/klm/qat/qat/drivers/crypto/qat/qat_200xx/adf_drv.c
+index 98f9667..0c411f2 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_200xx/adf_drv.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_200xx/adf_drv.c
+@@ -230,12 +230,6 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 	pci_set_master(pdev);
+ 
+-	if (adf_enable_aer(accel_dev, &adf_driver)) {
+-		dev_err(&pdev->dev, "Failed to enable aer\n");
+-		ret = -EFAULT;
+-		goto out_err_free_reg;
+-	}
+-
+ 	if (pci_save_state(pdev)) {
+ 		dev_err(&pdev->dev, "Failed to save pci state\n");
+ 		ret = -ENOMEM;
+@@ -280,7 +274,6 @@ static void adf_remove(struct pci_dev *pdev)
+ 	}
+ 	adf_dev_stop(accel_dev);
+ 	adf_dev_shutdown(accel_dev);
+-	adf_disable_aer(accel_dev);
+ 	adf_cleanup_accel(accel_dev);
+ 	adf_cleanup_pci_dev(accel_dev);
+ 	kfree(accel_dev);
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_c3xxx/adf_drv.c b/klm/qat/qat/drivers/crypto/qat/qat_c3xxx/adf_drv.c
+index 256c05f..6d4973d 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_c3xxx/adf_drv.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_c3xxx/adf_drv.c
+@@ -233,12 +233,6 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 	pci_set_master(pdev);
+ 
+-	if (adf_enable_aer(accel_dev, &adf_driver)) {
+-		dev_err(&pdev->dev, "Failed to enable aer\n");
+-		ret = -EFAULT;
+-		goto out_err_free_reg;
+-	}
+-
+ 	if (pci_save_state(pdev)) {
+ 		dev_err(&pdev->dev, "Failed to save pci state\n");
+ 		ret = -ENOMEM;
+@@ -283,7 +277,6 @@ static void adf_remove(struct pci_dev *pdev)
+ 	}
+ 	adf_dev_stop(accel_dev);
+ 	adf_dev_shutdown(accel_dev);
+-	adf_disable_aer(accel_dev);
+ 	adf_cleanup_accel(accel_dev);
+ 	adf_cleanup_pci_dev(accel_dev);
+ 	kfree(accel_dev);
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_c4xxx/adf_drv.c b/klm/qat/qat/drivers/crypto/qat/qat_c4xxx/adf_drv.c
+index 0bd2e9b..736f428 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_c4xxx/adf_drv.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_c4xxx/adf_drv.c
+@@ -222,12 +222,6 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 	pci_set_master(pdev);
+ 
+-	if (adf_enable_aer(accel_dev, &adf_driver)) {
+-		dev_err(&pdev->dev, "Failed to enable aer\n");
+-		ret = -EFAULT;
+-		goto out_err_free_reg;
+-	}
+-
+ 	if (pci_save_state(pdev)) {
+ 		dev_err(&pdev->dev, "Failed to save pci state\n");
+ 		ret = -ENOMEM;
+@@ -282,7 +276,6 @@ static void adf_remove(struct pci_dev *pdev)
+ 
+ 	adf_dev_stop(accel_dev);
+ 	adf_dev_shutdown(accel_dev);
+-	adf_disable_aer(accel_dev);
+ 	adf_cleanup_accel(accel_dev);
+ 	adf_cleanup_pci_dev(accel_dev);
+ 	kfree(accel_dev);
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_c62x/adf_drv.c b/klm/qat/qat/drivers/crypto/qat/qat_c62x/adf_drv.c
+index 27481b8..2f93962 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_c62x/adf_drv.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_c62x/adf_drv.c
+@@ -223,12 +223,6 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 	pci_set_master(pdev);
+ 
+-	if (adf_enable_aer(accel_dev, &adf_driver)) {
+-		dev_err(&pdev->dev, "Failed to enable aer\n");
+-		ret = -EFAULT;
+-		goto out_err_free_reg;
+-	}
+-
+ 	if (pci_save_state(pdev)) {
+ 		dev_err(&pdev->dev, "Failed to save pci state\n");
+ 		ret = -ENOMEM;
+@@ -273,7 +267,6 @@ static void adf_remove(struct pci_dev *pdev)
+ 	}
+ 	adf_dev_stop(accel_dev);
+ 	adf_dev_shutdown(accel_dev);
+-	adf_disable_aer(accel_dev);
+ 	adf_cleanup_accel(accel_dev);
+ 	adf_cleanup_pci_dev(accel_dev);
+ 	kfree(accel_dev);
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c b/klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c
+index ebca800..652abef 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_common/adf_aer.c
+@@ -409,42 +409,6 @@ void adf_exit_fatal_error_wq(void)
+ 	fatal_error_wq = NULL;
+ }
+ 
+-/**
+- * adf_enable_aer() - Enable Advance Error Reporting for acceleration device
+- * @accel_dev:  Pointer to acceleration device.
+- * @adf:        PCI device driver owning the given acceleration device.
+- *
+- * Function enables PCI Advance Error Reporting for the
+- * QAT acceleration device accel_dev.
+- * To be used by QAT device specific drivers.
+- *
+- * Return: 0 on success, error code otherwise.
+- */
+-int adf_enable_aer(struct adf_accel_dev *accel_dev, struct pci_driver *adf)
+-{
+-	struct pci_dev *pdev = accel_to_pci_dev(accel_dev);
+-
+-	adf->err_handler = (struct pci_error_handlers *)(&adf_err_handler);
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(adf_enable_aer);
+-
+-/**
+- * adf_disable_aer() - Enable Advance Error Reporting for acceleration device
+- * @accel_dev:  Pointer to acceleration device.
+- *
+- * Function disables PCI Advance Error Reporting for the
+- * QAT acceleration device accel_dev.
+- * To be used by QAT device specific drivers.
+- *
+- * Return: void
+- */
+-void adf_disable_aer(struct adf_accel_dev *accel_dev)
+-{
+-	struct pci_dev *pdev = accel_to_pci_dev(accel_dev);
+-}
+-EXPORT_SYMBOL_GPL(adf_disable_aer);
+-
+ int adf_init_aer(void)
+ {
+ 	device_reset_wq = alloc_workqueue("qat_device_reset_wq",
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_common/adf_common_drv.h b/klm/qat/qat/drivers/crypto/qat/qat_common/adf_common_drv.h
+index e3fd75b..78c5e10 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_common/adf_common_drv.h
++++ b/klm/qat/qat/drivers/crypto/qat/qat_common/adf_common_drv.h
+@@ -173,8 +173,6 @@ void adf_ae_fw_release(struct adf_accel_dev *accel_dev);
+ int adf_ae_start(struct adf_accel_dev *accel_dev);
+ int adf_ae_stop(struct adf_accel_dev *accel_dev);
+ 
+-int adf_enable_aer(struct adf_accel_dev *accel_dev, struct pci_driver *adf);
+-void adf_disable_aer(struct adf_accel_dev *accel_dev);
+ void adf_reset_sbr(struct adf_accel_dev *accel_dev);
+ void adf_reset_flr(struct adf_accel_dev *accel_dev);
+ void adf_dev_pre_reset(struct adf_accel_dev *accel_dev);
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_d15xx/adf_drv.c b/klm/qat/qat/drivers/crypto/qat/qat_d15xx/adf_drv.c
+index 294f3f5..87dcfef 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_d15xx/adf_drv.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_d15xx/adf_drv.c
+@@ -218,12 +218,6 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 	pci_set_master(pdev);
+ 
+-	if (adf_enable_aer(accel_dev, &adf_driver)) {
+-		dev_err(&pdev->dev, "Failed to enable aer\n");
+-		ret = -EFAULT;
+-		goto out_err_free_reg;
+-	}
+-
+ 	if (pci_save_state(pdev)) {
+ 		dev_err(&pdev->dev, "Failed to save pci state\n");
+ 		ret = -ENOMEM;
+@@ -268,7 +262,6 @@ static void adf_remove(struct pci_dev *pdev)
+ 	}
+ 	adf_dev_stop(accel_dev);
+ 	adf_dev_shutdown(accel_dev);
+-	adf_disable_aer(accel_dev);
+ 	adf_cleanup_accel(accel_dev);
+ 	adf_cleanup_pci_dev(accel_dev);
+ 	kfree(accel_dev);
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_dh895xcc/adf_drv.c b/klm/qat/qat/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
+index a93855e..424a15a 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_dh895xcc/adf_drv.c
+@@ -218,12 +218,6 @@ static int adf_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	}
+ 	pci_set_master(pdev);
+ 
+-	if (adf_enable_aer(accel_dev, &adf_driver)) {
+-		dev_err(&pdev->dev, "Failed to enable aer\n");
+-		ret = -EFAULT;
+-		goto out_err_free_reg;
+-	}
+-
+ 	if (pci_save_state(pdev)) {
+ 		dev_err(&pdev->dev, "Failed to save pci state\n");
+ 		ret = -ENOMEM;
+@@ -268,7 +262,6 @@ static void adf_remove(struct pci_dev *pdev)
+ 	}
+ 	adf_dev_stop(accel_dev);
+ 	adf_dev_shutdown(accel_dev);
+-	adf_disable_aer(accel_dev);
+ 	adf_cleanup_accel(accel_dev);
+ 	adf_cleanup_pci_dev(accel_dev);
+ 	kfree(accel_dev);
+-- 
+2.39.3
+

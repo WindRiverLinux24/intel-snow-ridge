@@ -1,0 +1,31 @@
+From 8ff043a2333cc8c89ffdc95aa6c9ac0fa151914d Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:27:14 +0000
+Subject: [PATCH 22/24] rdk/snr: change PMD_PAGE_SIZE to PMD_SIZE
+
+kernel commit 82328227db8f ("x86/mm: Remove P*D_PAGE_MASK and
+P*D_PAGE_SIZE macros").
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/qat/usdm/qae_mem_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/klm/qat/usdm/qae_mem_drv.c b/klm/qat/usdm/qae_mem_drv.c
+index 113568c..cd001d0 100644
+--- a/klm/qat/usdm/qae_mem_drv.c
++++ b/klm/qat/usdm/qae_mem_drv.c
+@@ -824,7 +824,7 @@ dev_get_user_page(struct file *fp, uint32_t cmd, unsigned long arg)
+     {
+        if (PageHuge(page))
+        {
+-           if (user_mem_info.size != PMD_PAGE_SIZE)
++           if (user_mem_info.size != PMD_SIZE)
+            {
+                mm_err("%s:%d dev_get_user_page: user_mem_info.size is not "
+                       "equal to hugepage_size, ret=%d\n",
+-- 
+2.39.3
+

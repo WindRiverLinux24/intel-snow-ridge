@@ -1,0 +1,30 @@
+From 773f5cb65f1f2aa8c3b82f4408ec1f1d7a63d4ea Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:26:31 +0000
+Subject: [PATCH 08/24] rdk/snr: klm/cpk/ice_txrx.c: include xdp.h
+
+Due to kernel commit 680ee0456a57 ("net: invert the netdevice.h vs xdp.h
+dependency"), include xdp.h.
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/cpk/ice_txrx.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/klm/cpk/ice_txrx.c b/klm/cpk/ice_txrx.c
+index d7f5cb0..bd4f082 100644
+--- a/klm/cpk/ice_txrx.c
++++ b/klm/cpk/ice_txrx.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/prefetch.h>
+ #include <linux/mm.h>
++#include <net/xdp.h>
+ #include "ice_txrx_lib.h"
+ #include "ice_lib.h"
+ #include "ice.h"
+-- 
+2.39.3
+

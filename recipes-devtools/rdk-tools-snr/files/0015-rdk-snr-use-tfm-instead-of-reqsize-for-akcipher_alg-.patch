@@ -1,0 +1,63 @@
+From 47f31a796a31b6bc713d743a113bf4b72f2cb78e Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:26:48 +0000
+Subject: [PATCH 15/24] rdk/snr: use tfm instead of reqsize for akcipher_alg
+ and kpp_alg
+
+kernel commit 4d2b225a67e6 ("crypto: kpp - Move reqsize into tfm").
+kernel commit 3e71e5b0efcc ("crypto: akcipher - Move reqsize into tfm").
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ .../qat/drivers/crypto/qat/qat_common/qat_asym_algs.c  | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_common/qat_asym_algs.c b/klm/qat/qat/drivers/crypto/qat/qat_common/qat_asym_algs.c
+index 1ca459f..ecdd8d4 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_common/qat_asym_algs.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_common/qat_asym_algs.c
+@@ -506,6 +506,9 @@ static int qat_dh_init_tfm(struct crypto_kpp *tfm)
+ 
+ 	if (!inst)
+ 		return -EINVAL;
++#if KERNEL_VERSION(6, 2, 0) <= LINUX_VERSION_CODE
++	kpp_set_reqsize(tfm, sizeof(struct qat_asym_request) + 64);
++#endif
+ 
+ 	ctx->p_size = 0;
+ 	ctx->g2 = false;
+@@ -1269,6 +1272,9 @@ static int qat_rsa_init_tfm(struct crypto_akcipher *tfm)
+ 	if (!inst)
+ 		return -EINVAL;
+ 
++#if KERNEL_VERSION(6, 2, 0) <= LINUX_VERSION_CODE
++        akcipher_set_reqsize(tfm, sizeof(struct qat_asym_request) + 64);
++#endif
+ 	ctx->key_sz = 0;
+ 	ctx->inst = inst;
+ 	return 0;
+@@ -1293,7 +1299,9 @@ static struct akcipher_alg rsa = {
+ 	.max_size = qat_rsa_max_size,
+ 	.init = qat_rsa_init_tfm,
+ 	.exit = qat_rsa_exit_tfm,
++#if KERNEL_VERSION(6, 2, 0) > LINUX_VERSION_CODE
+ 	.reqsize = sizeof(struct qat_asym_request) + 64,
++#endif
+ 	.base = {
+ 		.cra_name = "rsa",
+ 		.cra_driver_name = "qat-rsa",
+@@ -1310,7 +1318,9 @@ static struct kpp_alg dh = {
+ 	.max_size = qat_dh_max_size,
+ 	.init = qat_dh_init_tfm,
+ 	.exit = qat_dh_exit_tfm,
++#if KERNEL_VERSION(6, 2, 0) > LINUX_VERSION_CODE
+ 	.reqsize = sizeof(struct qat_asym_request) + 64,
++#endif
+ 	.base = {
+ 		.cra_name = "dh",
+ 		.cra_driver_name = "qat-dh",
+-- 
+2.39.3
+

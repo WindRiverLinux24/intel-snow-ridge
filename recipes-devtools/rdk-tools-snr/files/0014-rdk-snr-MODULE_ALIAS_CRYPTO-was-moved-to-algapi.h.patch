@@ -1,0 +1,30 @@
+From 9cb33a675c9e8db47dc547d5793e997725eef5a2 Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:26:45 +0000
+Subject: [PATCH 14/24] rdk/snr: MODULE_ALIAS_CRYPTO was moved to algapi.h
+
+MODULE_ALIAS_CRYPTO was moved to algapi.h in kernel commit
+0c0edf6168ce ("crypto: api - Move MODULE_ALIAS_CRYPTO to algapi.h").
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/qat/qat/drivers/crypto/qat/qat_common/adf_ctl_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/klm/qat/qat/drivers/crypto/qat/qat_common/adf_ctl_drv.c b/klm/qat/qat/drivers/crypto/qat/qat_common/adf_ctl_drv.c
+index 45cac21..b996f3a 100644
+--- a/klm/qat/qat/drivers/crypto/qat/qat_common/adf_ctl_drv.c
++++ b/klm/qat/qat/drivers/crypto/qat/qat_common/adf_ctl_drv.c
+@@ -12,6 +12,7 @@
+ #include <linux/device.h>
+ #include <linux/notifier.h>
+ #include <linux/reboot.h>
++#include <crypto/algapi.h>
+ 
+ #include "adf_accel_devices.h"
+ #include "adf_common_drv.h"
+-- 
+2.39.3
+

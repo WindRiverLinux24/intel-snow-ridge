@@ -1,0 +1,47 @@
+From 603580a7be96c61d9e911ed329d1466f18402a0d Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:26:37 +0000
+Subject: [PATCH 11/24] rdk/snr: klm/cpk/ice_ethtool.c: add kernel_ringparam
+ and extack
+
+kernel commit 7462494408cd ("ethtool: extend ringparam setting/getting API with
+rx_buf_len").
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/cpk/ice_ethtool.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/klm/cpk/ice_ethtool.c b/klm/cpk/ice_ethtool.c
+index 2ae144b..88a5b10 100644
+--- a/klm/cpk/ice_ethtool.c
++++ b/klm/cpk/ice_ethtool.c
+@@ -2752,7 +2752,10 @@ ice_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd,
+ }
+ 
+ static void
+-ice_get_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
++ice_get_ringparam(struct net_device *netdev,
++		  struct ethtool_ringparam *ring,
++		  struct kernel_ethtool_ringparam __always_unused *kernel_rp,
++		  struct netlink_ext_ack __always_unused *extack)
+ {
+ 	struct ice_netdev_priv *np = netdev_priv(netdev);
+ 	struct ice_vsi *vsi = np->vsi;
+@@ -2770,7 +2773,10 @@ ice_get_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
+ }
+ 
+ static int
+-ice_set_ringparam(struct net_device *netdev, struct ethtool_ringparam *ring)
++ice_set_ringparam(struct net_device *netdev,
++		  struct ethtool_ringparam *ring,
++		  struct kernel_ethtool_ringparam __always_unused *kernel_rp,
++		  struct netlink_ext_ack __always_unused *extack)
+ {
+ 	struct ice_ring *tx_rings = NULL, *rx_rings = NULL;
+ 	struct ice_netdev_priv *np = netdev_priv(netdev);
+-- 
+2.39.3
+

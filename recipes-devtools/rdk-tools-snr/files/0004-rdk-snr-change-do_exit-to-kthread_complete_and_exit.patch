@@ -1,0 +1,32 @@
+From 28615ef64ff0a5fed4949ab775efdbe0df4e8db6 Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:26:23 +0000
+Subject: [PATCH 04/24] rdk/snr: change do_exit to kthread_complete_and_exit
+
+Due to kernel commit eb55e716ac1a ("exit: Stop exporting do_exit")
+and cead1855266 ("exit: Rename complete_and_exit to
+kthread_complete_and_exit"), use kthread_complete_and_exit instead.
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/hqm/hqm/linux/dlb_dp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/klm/hqm/hqm/linux/dlb_dp.c b/klm/hqm/hqm/linux/dlb_dp.c
+index 5d60b2f..e026300 100644
+--- a/klm/hqm/hqm/linux/dlb_dp.c
++++ b/klm/hqm/hqm/linux/dlb_dp.c
+@@ -1543,7 +1543,7 @@ static int __alert_fn(void *__args)
+ 
+ 	mutex_unlock(&domain->resource_mutex);
+ 
+-	do_exit(0);
++	kthread_complete_and_exit(NULL, 0);
+ 
+ 	return 0;
+ }
+-- 
+2.39.3
+

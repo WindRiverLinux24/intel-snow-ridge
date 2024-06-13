@@ -1,0 +1,51 @@
+From 047706c002c07460379cf687acb63aeb3842d9c0 Mon Sep 17 00:00:00 2001
+From: Yongxin Liu <yongxin.liu@windriver.com>
+Date: Thu, 13 Jun 2024 10:27:11 +0000
+Subject: [PATCH 21/24] rdk/snr: remove not supported
+ adk_netd_ethtool_get_ringparam and adk_netd_ethtool_set_ringparam
+
+Upstream-Status: Inappropriate [RDK is released in tarball only]
+
+Signed-off-by: Yongxin Liu <yongxin.liu@windriver.com>
+---
+ klm/netd/adk_netd_ethtool.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
+
+diff --git a/klm/netd/adk_netd_ethtool.c b/klm/netd/adk_netd_ethtool.c
+index de1ef43..5329f57 100644
+--- a/klm/netd/adk_netd_ethtool.c
++++ b/klm/netd/adk_netd_ethtool.c
+@@ -465,21 +465,6 @@ adk_netd_ethtool_set_eeprom(struct net_device *netdev,
+ 	return adk_netd_idc_set_eeprom(if_id, eeprom, p);
+ }
+ 
+-static void
+-adk_netd_ethtool_get_ringparam(struct net_device *netdev,
+-			       struct ethtool_ringparam *param)
+-{
+-	/* Not supported */
+-}
+-
+-static int
+-adk_netd_ethtool_set_ringparam(struct net_device *netdev,
+-			       struct ethtool_ringparam *param)
+-{
+-	/* Not supported */
+-	return 0;
+-}
+-
+ static void
+ adk_netd_ethtool_get_pauseparam(struct net_device *netdev,
+ 				struct ethtool_pauseparam *pause)
+@@ -689,8 +674,6 @@ static const struct ethtool_ops adk_netd_ethtool_ops = {
+ 	.get_eeprom_len         = adk_netd_ethtool_get_eeprom_len,
+ 	.get_eeprom             = adk_netd_ethtool_get_eeprom,
+ 	.set_eeprom             = adk_netd_ethtool_set_eeprom,
+-	.get_ringparam          = adk_netd_ethtool_get_ringparam,
+-	.set_ringparam          = adk_netd_ethtool_set_ringparam,
+ 	.get_pauseparam         = adk_netd_ethtool_get_pauseparam,
+ 	.set_pauseparam         = adk_netd_ethtool_set_pauseparam,
+ 	.self_test              = adk_netd_ethtool_self_test,
+-- 
+2.39.3
+
