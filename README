@@ -64,12 +64,11 @@ THE SOFTWARE.
 2. Hardware
 ===========
 
-2.1 Validated Board Info
-------------------------
-
 This BSP is only validated in the following environment. If you use this BSP
 in a different environment it may have some issues.
 
+2.1 Snow Ridge NS (Network Series)
+----------------------------------
 [BIOS Info]
 	Vendor: Intel Corporation
 	Version: JBVLCRB2.86B.0014.P82.2106291629
@@ -84,3 +83,20 @@ in a different environment it may have some issues.
 
 [Board Info]
 	Jacobsville NS Frost Creek Customer Reference Board (CRB)
+
+2.2 Snow Ridge BTS (Base Transceiver Station)
+---------------------------------------------
+[BIOS Info]
+	Vendor: Intel Corporation
+	Version: JBVLCRB2.86B.0014.P97.2110270851
+	Release Date: 10/27/2021
+
+[CPU Info]
+	CPU family      : 6
+	Model           : 134
+	Model name      : Intel Atom(R) P5962BC2 processor
+	Stepping        : 7
+	Microcode       : 0x4c000016
+
+[Board Info]
+	Jacobsville BTS Victoria Canyon Customer Reference Board (CRB)
