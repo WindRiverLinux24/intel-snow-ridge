@@ -12,6 +12,7 @@ Table of Contents:
 ** 2.1 Snow Ridge NS
 ** 2.2 Snow Ridge BTS
 * 3. Runtime Development Kit (RDK)
+* 4. Notes
 
 1. Overview
 ===========
@@ -108,3 +109,11 @@ in a different environment it may have some issues.
 
 Intel Runtime Development Kit (RDK) is enabled through template feature/snowridge-rdk.
 Please read ${LAYERDIR}/templates/feature/snowridge-rdk/README first.
+
+4. Notes
+========
+
+1) The QAT C4xxx Series can be supported either by feature/snowridge-rdk in
+intel-snow-ridge layer or feature/intel-qat in intel-x86 layer.
+But you cannot use feature/snowridge-rdk and feature/intel-qat together in one build.
+Because they all provide QAT related kernel drivers and this will cause confliction.
