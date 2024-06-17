@@ -11,6 +11,7 @@ Table of Contents:
 * 2. Hardware
 ** 2.1 Snow Ridge NS
 ** 2.2 Snow Ridge BTS
+** 2.3 Supported Features
 * 3. Runtime Development Kit (RDK)
 * 4. Notes
 
@@ -104,6 +105,53 @@ in a different environment it may have some issues.
 [Board Info]
 	Jacobsville BTS Victoria Canyon Customer Reference Board (CRB)
 
+2.3 Supported Features
+----------------------
+
+The following BSP features are validated and supported.
+
+	o Bus
+		+ PCI-Express
+		+ SMBus:
+			+ SMBus [0c05]: Intel Corporation Device [8086:18df] (rev 11)
+
+	o Network
+		+ Intel Corporation I210 Gigabit Network Connection [8086:1533] (rev 03)
+		+ Intel Corporation Ethernet Connection E822-C for QSFP [8086:1891] (rev 20)
+		+ Intel Corporation Ethernet Connection E822-C for SFP [8086:1892] (rev 20)
+		+ Intel Corporation Device [8086:1896] (rev 20)
+
+	o USB
+		+ USB 3.0 XHCI controller
+			+ USB controller [0c03]: Intel Corporation Device [8086:18d0] (rev 11)
+
+	o Storage
+		+ SATA
+			+ SATA controller [0106]: Intel Corporation Device [8086:18b3] (rev 11)
+			+ SATA controller [0106]: Intel Corporation Device [8086:18f3] (rev 11)
+
+	o Power Management
+		+ Suspend to IDLE: ACPI S0
+		+ Suspend to DISK: ACPI S4
+		+ CPU Freq: ACPI P-state
+		+ CPU Idle: ACPI C-state
+
+	o Watchdog
+		+ Intel TCO Hardware WatchDog
+
+	o Misc Devices
+		+ Input device
+			+ USB mouse & keyboard
+		+ UART
+		+ IOMMU
+		+ RTC
+		+ CPU core temperature sensor
+
+	o EDAC (Error Detection And Correction)
+
+	o Intel QuickAssist Technology
+		+ Intel C4xxx Series QAT [8086:18a0] (rev 11)
+
 3. Runtime Development Kit (RDK)
 ================================
 
@@ -113,7 +161,11 @@ Please read ${LAYERDIR}/templates/feature/snowridge-rdk/README first.
 4. Notes
 ========
 
-1) The QAT C4xxx Series can be supported either by feature/snowridge-rdk in
+1) The default serial console port is ttyS4 at MMIO 0x9068b000.
+The console index may be different on your board due to different BIOS settings and
+different design of hardware.
+
+2) The QAT C4xxx Series can be supported either by feature/snowridge-rdk in
 intel-snow-ridge layer or feature/intel-qat in intel-x86 layer.
 But you cannot use feature/snowridge-rdk and feature/intel-qat together in one build.
 Because they all provide QAT related kernel drivers and this will cause confliction.
