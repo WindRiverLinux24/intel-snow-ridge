@@ -30,6 +30,7 @@ SRC_URI = "${RDK_TOOLS_SOURCE} \
            file://0022-rdk-snr-change-PMD_PAGE_SIZE-to-PMD_SIZE.patch \
            file://0023-rdk-snr-netif_rx_ni-skb-netif_rx-skb.patch \
            file://0024-rdk-snr-change-to-for-KBUILD_EXTRA_SYMBOLS.patch \
+           file://0025-rdk-snr-use-ether_address_set-instead-of-memcpy.patch \
           "
 
 # RDK user space and kernel module source packages
