@@ -57,6 +57,7 @@ RDK_INSTALL_DIR ?= "/opt/intel/rdk-tools"
 export KSRC = "${STAGING_KERNEL_BUILDDIR}"
 export SDKTARGETSYSROOT = "${STAGING_DIR_TARGET}"
 export OECORE_NATIVE_SYSROOT = "${STAGING_DIR_NATIVE}"
+export KCFLAGS = "-fmacro-prefix-map=${S}= -fdebug-prefix-map=${S}= "
 
 TARGET_CC_ARCH += "${LDFLAGS}"
 EXTRA_OEMAKE = "V=1"
