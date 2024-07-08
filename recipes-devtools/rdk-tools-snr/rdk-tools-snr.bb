@@ -86,6 +86,9 @@ do_install () {
 
 	install -d ${D}${RDK_INSTALL_DIR}
 	cp -r ${S}/install/*  ${D}${RDK_INSTALL_DIR}
+	if [ -e ${D}${RDK_INSTALL_DIR}/include/Makefile ]; then
+		rm -f ${D}${RDK_INSTALL_DIR}/include/Makefile
+	fi
 
 	install -d ${D}${nonarch_base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/staging/intel-rdk
 	install -m 0644  ${D}${RDK_INSTALL_DIR}/drivers/*.ko ${D}${nonarch_base_libdir}/modules/${KERNEL_VERSION}/kernel/drivers/staging/intel-rdk/
